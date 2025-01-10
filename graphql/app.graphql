@@ -1,0 +1,1135 @@
+query ExistUser {
+  userExist
+}
+
+query GetMe {
+  me {
+    ...MeFragment
+  }
+}
+
+query GetMyPologSummary {
+  me {
+    user {
+      pologSummary {
+        ...PologSummaryFragment
+      }
+    }
+  }
+}
+
+query GetMyPologs(
+  $cursor: String
+  $limit: Int!
+  $q: String
+  $sortType: PologSortType!
+  $filter: PologFilter
+) {
+  me {
+    pologs(
+      after: $cursor
+      first: $limit
+      q: $q
+      sortType: $sortType
+      filter: $filter
+    ) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetMyAccompaniedPologs(
+  $cursor: String
+  $limit: Int!
+  $q: String
+  $sortType: PologSortType!
+  $filter: PologFilter
+) {
+  me {
+    accompaniedPologs(
+      after: $cursor
+      first: $limit
+      q: $q
+      sortType: $sortType
+      filter: $filter
+    ) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetMyClippedPologs($cursor: String, $limit: Int!) {
+  me {
+    clippedPologs(after: $cursor, first: $limit) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetMyNotifications($cursor: String, $limit: Int!) {
+  me {
+    notifications(after: $cursor, first: $limit) {
+      nodes {
+        ...NotificationFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetUser($userId: ID!) {
+  user(id: $userId) {
+    ...UserFragment
+  }
+}
+
+query GetUserOverview($userId: ID!) {
+  user(id: $userId) {
+    ...UserOverviewFragment
+  }
+}
+
+query GetPolog($pologId: ID!) {
+  polog(id: $pologId) {
+    ...PologFragment
+  }
+}
+
+query GetPologSummary($userId: ID!) {
+  user(id: $userId) {
+    pologSummary {
+      ...PologSummaryFragment
+    }
+  }
+}
+
+query GetPologComments($pologId: ID!, $cursor: String, $limit: Int!) {
+  polog(id: $pologId) {
+    comments(after: $cursor, first: $limit) {
+      nodes {
+        ...PologCommentFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetPologs(
+  $userId: ID!
+  $cursor: String
+  $limit: Int!
+  $q: String
+  $sortType: PologSortType!
+  $filter: PologFilter
+) {
+  user(id: $userId) {
+    pologs(
+      after: $cursor
+      first: $limit
+      q: $q
+      sortType: $sortType
+      filter: $filter
+    ) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetAccompaniedPologs(
+  $userId: ID!
+  $cursor: String
+  $limit: Int!
+  $q: String
+  $sortType: PologSortType!
+  $filter: PologFilter
+) {
+  user(id: $userId) {
+    accompaniedPologs(
+      after: $cursor
+      first: $limit
+      q: $q
+      sortType: $sortType
+      filter: $filter
+    ) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetFollowees($userId: ID!, $cursor: String, $limit: Int!) {
+  user(id: $userId) {
+    followees(after: $cursor, first: $limit) {
+      nodes {
+        ...UserOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetFollowers($userId: ID!, $cursor: String, $limit: Int!) {
+  user(id: $userId) {
+    followers(after: $cursor, first: $limit) {
+      nodes {
+        ...UserOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query SearchUsers($cursor: String, $limit: Int!, $username: String!) {
+  users(after: $cursor, first: $limit, username: $username) {
+    nodes {
+      ...UserOverviewFragment
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+query SearchPologs($cursor: String, $limit: Int!, $q: String!) {
+  pologs(after: $cursor, first: $limit, q: $q) {
+    nodes {
+      ...PologOverviewFragment
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+query GetMyGroups($cursor: String, $limit: Int!) {
+  me {
+    groups(after: $cursor, first: $limit) {
+      nodes {
+        ...GroupOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetGroupAlbums($cursor: String, $limit: Int!, $groupId: ID!) {
+  group(id: $groupId) {
+    albums(after: $cursor, first: $limit) {
+      nodes {
+        ...GroupAlbumOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetGroupActivities($cursor: String, $limit: Int!, $groupId: ID!) {
+  group(id: $groupId) {
+    activities(after: $cursor, first: $limit) {
+      nodes {
+        ...GroupActivityFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetMyGroupInvitations {
+  me {
+    groupInvitations(after: null, first: 10000) {
+      nodes {
+        ...GroupInvitationOverviewFragment
+      }
+    }
+  }
+}
+
+query GetGroup($groupId: ID!) {
+  group(id: $groupId) {
+    ...GroupFragment
+  }
+}
+
+query GetGroupActivity($activityId: ID!) {
+  groupActivity(id: $activityId) {
+    ...GroupActivityFragment
+  }
+}
+
+query GetGroupInvitation($invitationId: ID!) {
+  groupInvitation(id: $invitationId) {
+    ...GroupInvitationFragment
+  }
+}
+
+query GetGroupAlbum($albumId: ID!) {
+  groupAlbum(id: $albumId) {
+    ...GroupAlbumFragment
+  }
+}
+
+query GetGroupAssets(
+  $cursor: String
+  $limit: Int!
+  $albumId: ID!
+  $kind: AssetKind
+) {
+  groupAlbum(id: $albumId) {
+    assets(after: $cursor, first: $limit, kind: $kind) {
+      nodes {
+        ...GroupAssetFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetGroupAsset($assetId: ID!) {
+  groupAsset(id: $assetId) {
+    ...GroupAssetFragment
+  }
+}
+
+query GetAlbumLinkedPologs($cursor: String, $limit: Int!, $albumId: ID!) {
+  groupAlbum(id: $albumId) {
+    pologs(after: $cursor, first: $limit) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetMutualFollows {
+  me {
+    mutualFollows {
+      ...UserOverviewFragment
+    }
+  }
+}
+
+query GetGroupSpotLinkState($groupId: ID!) {
+  me {
+    groupSpotLinkState(groupId: $groupId) {
+      indexedSpotLinked
+      likedSpotLinked
+    }
+  }
+}
+
+query GetBlockedUsers($cursor: String, $limit: Int!) {
+  me {
+    blockedUsers(after: $cursor, first: $limit) {
+      nodes {
+        ...UserOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetRecommendedPologs($cursor: String, $limit: Int!) {
+  recommendedPologs(after: $cursor, first: $limit) {
+    nodes {
+      ...PologOverviewFragment
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+query GetLatestPologs($cursor: String, $limit: Int!) {
+  pologs(after: $cursor, first: $limit) {
+    nodes {
+      ...PologOverviewFragment
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+query GetMyFollowingPologs($cursor: String, $limit: Int!) {
+  me {
+    followingPologs(after: $cursor, first: $limit) {
+      nodes {
+        ...PologOverviewFragment
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+
+query GetAllGroupMembers {
+  me {
+    groups(after: null, first: 10000) {
+      nodes {
+        ...SelectGroupMemberFragment
+      }
+    }
+  }
+}
+
+query GetSpotCategories($parentId: String) {
+  spotCategories(first: 10000, parentId: $parentId) {
+    nodes {
+      id
+      parentId
+      japanese
+    }
+  }
+}
+
+query GetSpot($id: ID!) {
+  spot(id: $id) {
+    ...SpotFragment
+  }
+}
+
+query GetStamps($userId: ID!) {
+  user(id: $userId) {
+    stamps {
+      ...StampFragment
+    }
+  }
+}
+
+mutation CreateUser(
+  $username: String!
+  $fullName: String!
+  $iconGsUrl: String!
+) {
+  userCreate(
+    input: { username: $username, fullName: $fullName, iconGsUrl: $iconGsUrl }
+  ) {
+    ...MeFragment
+  }
+}
+
+mutation UpdateUser(
+  $fullName: String!
+  $iconGsUrl: String!
+  $profile: String!
+  $gender: Gender!
+  $birthdate: String!
+  $isPublic: Boolean!
+  $isPublicLikedSpot: Boolean!
+) {
+  userUpdate(
+    input: {
+      fullName: $fullName
+      iconGsUrl: $iconGsUrl
+      profile: $profile
+      gender: $gender
+      birthdate: $birthdate
+      isPublic: $isPublic
+      isPublicLikedSpot: $isPublicLikedSpot
+    }
+  ) {
+    ...MeFragment
+  }
+}
+
+mutation Withdraw($reason: WithdrawalReason!, $detail: String) {
+  userWithdrawal(input: { reason: $reason, detail: $detail })
+}
+
+mutation FollowUser($toUserId: ID!) {
+  userFollow(input: { toUserId: $toUserId })
+}
+
+mutation UnFollowUser($toUserId: ID!) {
+  userUnfollow(input: { toUserId: $toUserId })
+}
+
+mutation AcceptFollowRequest($fromUserId: ID!) {
+  userFollowAccept(input: { fromUserId: $fromUserId })
+}
+
+mutation CreatePologComment($pologId: ID!, $text: String!) {
+  pologCommentCreate(input: { pologId: $pologId, text: $text }) {
+    ...PologCommentFragment
+  }
+}
+
+mutation LikePolog($id: ID!) {
+  pologLike(id: $id) {
+    ...PologFragment
+  }
+}
+
+mutation UnLikePolog($id: ID!) {
+  pologUnLike(id: $id) {
+    ...PologFragment
+  }
+}
+
+mutation ClipPolog($id: ID!) {
+  pologClip(id: $id) {
+    ...PologFragment
+  }
+}
+
+mutation UnClipPolog($id: ID!) {
+  pologUnClip(id: $id) {
+    ...PologFragment
+  }
+}
+
+mutation AcceptGroupInvitation($invitationId: ID!) {
+  groupInvitationAccept(input: { invitationId: $invitationId }) {
+    id
+  }
+}
+
+mutation RefuseGroupInvitation($invitationId: ID!) {
+  groupInvitationRefuse(input: { invitationId: $invitationId })
+}
+
+mutation CreateGroup(
+  $name: String!
+  $description: String
+  $iconGsUrl: String!
+) {
+  groupCreate(
+    input: { name: $name, description: $description, iconGsUrl: $iconGsUrl }
+  ) {
+    ...GroupFragment
+  }
+}
+
+mutation UpdateGroup(
+  $id: ID!
+  $name: String!
+  $description: String
+  $iconGsUrl: String!
+) {
+  groupUpdate(
+    input: {
+      id: $id
+      name: $name
+      description: $description
+      iconGsUrl: $iconGsUrl
+    }
+  ) {
+    ...GroupFragment
+  }
+}
+
+mutation CreateGroupJoinURL($groupId: ID!) {
+  groupJoinUrlCreate(input: { groupId: $groupId })
+}
+
+mutation JoinGroup($token: String!) {
+  groupJoin(input: { token: $token }) {
+    ...GroupFragment
+  }
+}
+
+mutation CreateGroupAlbum(
+  $groupId: ID!
+  $name: String!
+  $description: String
+  $coverImageGsUrl: String
+) {
+  groupAlbumCreate(
+    input: {
+      groupId: $groupId
+      name: $name
+      description: $description
+      coverImageGsUrl: $coverImageGsUrl
+    }
+  ) {
+    ...GroupAlbumFragment
+  }
+}
+
+mutation UpdateGroupAlbum(
+  $id: ID!
+  $name: String!
+  $description: String
+  $coverImageGsUrl: String
+) {
+  groupAlbumUpdate(
+    input: {
+      id: $id
+      name: $name
+      description: $description
+      coverImageGsUrl: $coverImageGsUrl
+    }
+  ) {
+    ...GroupAlbumFragment
+  }
+}
+
+mutation DeleteGroupAlbum($id: ID!) {
+  groupAlbumDelete(id: $id)
+}
+
+mutation InviteGroup($groupId: ID!, $userId: ID!) {
+  groupInvite(input: { groupId: $groupId, userId: $userId }) {
+    ...GroupInvitationFragment
+  }
+}
+
+mutation LeaveGroup($id: ID!) {
+  groupLeave(id: $id)
+}
+
+mutation LinkGroupSpot($groupId: ID!, $linkType: GroupSpotLinkType!) {
+  groupSpotLink(input: { groupId: $groupId, linkType: $linkType })
+}
+
+mutation UnLinkGroupSpot($groupId: ID!, $linkType: GroupSpotLinkType!) {
+  groupSpotLink(input: { groupId: $groupId, linkType: $linkType })
+}
+
+mutation LinkGroupAlbumPolog($albumId: ID!, $pologId: ID!) {
+  groupAlbumPologLink(input: { albumId: $albumId, pologId: $pologId })
+}
+
+mutation UnLinkGroupAlbumPolog($albumId: ID!, $pologId: ID!) {
+  groupAlbumPologUnLink(input: { albumId: $albumId, pologId: $pologId })
+}
+
+mutation ReportGroup(
+  $groupId: ID!
+  $content: String!
+  $reason: GroupReportReason!
+) {
+  groupReportCreate(
+    input: { groupId: $groupId, content: $content, reason: $reason }
+  ) {
+    id
+  }
+}
+
+mutation CreateGroupAsset($albumId: ID!, $assets: [GroupAssetCreateInput!]!) {
+  groupAssetCreate(input: { albumId: $albumId, assets: $assets }) {
+    ...GroupAssetFragment
+  }
+}
+
+mutation DeleteGroupAsset($id: ID!) {
+  groupAssetDelete(id: $id)
+}
+
+mutation CreatePolog(
+  $appLocalId: ID!
+  $title: String!
+  $forewordHtml: String
+  $afterwordHtml: String
+  $thumbnailGsUrl: String!
+  $companionIds: [ID!]!
+  $outerCompanionNames: [String!]!
+  $visibility: PologVisibility!
+  $label: PologLabelInput!
+  $tags: [String!]!
+  $isCommentable: Boolean!
+  $routes: [PologRouteInput!]!
+) {
+  pologCreate(
+    input: {
+      appLocalId: $appLocalId
+      title: $title
+      forewordHtml: $forewordHtml
+      afterwordHtml: $afterwordHtml
+      thumbnailGsUrl: $thumbnailGsUrl
+      companionIds: $companionIds
+      outerCompanionNames: $outerCompanionNames
+      visibility: $visibility
+      label: $label
+      tags: $tags
+      isCommentable: $isCommentable
+      routes: $routes
+    }
+  ) {
+    ...PologFragment
+  }
+}
+
+mutation UpdatePolog(
+  $id: ID!
+  $title: String!
+  $forewordHtml: String
+  $afterwordHtml: String
+  $thumbnailGsUrl: String!
+  $companionIds: [ID!]!
+  $outerCompanionNames: [String!]!
+  $visibility: PologVisibility!
+  $label: PologLabelInput!
+  $tags: [String!]!
+  $isCommentable: Boolean!
+  $routes: [PologRouteInput!]!
+) {
+  pologUpdate(
+    input: {
+      id: $id
+      title: $title
+      forewordHtml: $forewordHtml
+      afterwordHtml: $afterwordHtml
+      thumbnailGsUrl: $thumbnailGsUrl
+      companionIds: $companionIds
+      outerCompanionNames: $outerCompanionNames
+      visibility: $visibility
+      label: $label
+      tags: $tags
+      isCommentable: $isCommentable
+      routes: $routes
+    }
+  ) {
+    ...PologFragment
+  }
+}
+
+mutation SharePolog($id: ID!) {
+  pologShare(id: $id)
+}
+
+mutation DeletePolog($id: ID!) {
+  pologDelete(id: $id)
+}
+
+mutation BlockUser($toUserId: ID!) {
+  userBlockCreate(input: { toUserId: $toUserId })
+}
+
+mutation UnBlockUser($toUserId: ID!) {
+  userBlockDelete(input: { toUserId: $toUserId })
+}
+
+mutation DeleteNotification($id: ID!) {
+  userNotificationDelete(id: $id)
+}
+
+mutation RegisterFCMToken($token: String!, $deviceId: String!) {
+  fcmTokenRegister(input: { token: $token, deviceId: $deviceId })
+}
+
+fragment MeFragment on Me {
+  user {
+    id
+    username
+    fullName
+    iconGsUrl
+    iconSignedUrl
+    profile
+    gender
+    birthdate
+    isPublic
+    isPublicLikedSpot
+    followeeCount
+    followerCount
+    createdAt
+  }
+}
+
+fragment UserOverviewFragment on User {
+  id
+  username
+  fullName
+  iconSignedUrl
+  isPublic
+  isFollowing
+  isBlocking
+  createdAt
+}
+
+fragment UserFragment on User {
+  id
+  username
+  fullName
+  iconSignedUrl
+  profile
+  gender
+  birthdate
+  isPublic
+  isPublicLikedSpot
+  followeeCount
+  followerCount
+  isFollowing
+  isBlocked
+  isBlocking
+  isFollowRequesting
+  createdAt
+}
+
+fragment PologSummaryFragment on PologSummary {
+  totalPologCount
+  totalLikeCount
+  totalMediaCount
+  totalPologDayCount
+  totalDistance
+  totalSpotCount
+  visitedCountryCodes
+  visitedPrefectureCodes
+}
+
+fragment PologOverviewFragment on Polog {
+  id
+  user {
+    id
+    fullName
+    iconSignedUrl
+  }
+  title
+  thumbnailSignedUrl
+  visibility
+  likeCount
+  clipCount
+  isLiked
+  isClipped
+  routes {
+    id
+    spot {
+      ...SpotFragment
+    }
+    assetDate
+    assetSignedUrl
+    videoThumbnailSignedUrl
+    transportations
+    isIncludeIndex
+  }
+  createdAt
+}
+
+fragment PologFragment on Polog {
+  id
+  appLocalId
+  user {
+    id
+    fullName
+    iconSignedUrl
+  }
+  title
+  forewordHtml
+  afterwordHtml
+  thumbnailGsUrl
+  thumbnailSignedUrl
+  companions {
+    ...UserOverviewFragment
+  }
+  outerCompanionNames
+  visibility
+  label {
+    label1
+    label2
+    label3
+  }
+  tags
+  isCommentable
+  likeCount
+  clipCount
+  viewCount
+  commentCount
+  isLiked
+  isClipped
+  routes {
+    ...PologRouteFragment
+  }
+  createdAt
+}
+
+fragment PologRouteFragment on PologRoute {
+  id
+  spot {
+    ...SpotFragment
+  }
+  assetGsUrl
+  assetSignedUrl
+  assetKind
+  assetDate
+  description
+  priceLabel
+  review
+  transportations
+  isIncludeIndex
+  videoThumbnailSignedUrl
+  videoDurationSecond
+  videoStartSecond
+  videoEndSecond
+  videoIsMute
+}
+
+fragment PologCommentFragment on PologComment {
+  id
+  user {
+    id
+    username
+    fullName
+    iconSignedUrl
+  }
+  text
+  createdAt
+}
+
+fragment GroupOverviewFragment on Group {
+  id
+  name
+  iconSignedUrl
+  memberIds
+  activities(after: null, first: 1) {
+    nodes {
+      id
+      groupId
+      createdAt
+    }
+  }
+  createdAt
+}
+
+fragment GroupFragment on Group {
+  id
+  name
+  description
+  iconGsUrl
+  iconSignedUrl
+  members {
+    id
+    username
+    fullName
+    iconSignedUrl
+    isFollowing
+  }
+  albumCount
+  createdAt
+}
+
+fragment SelectGroupMemberFragment on Group {
+  id
+  name
+  members {
+    ...UserOverviewFragment
+  }
+}
+
+fragment GroupAlbumOverviewFragment on GroupAlbum {
+  id
+  name
+  includeAssetFrom
+  includeAssetTo
+  coverImageSignedUrl
+  firstAssets {
+    id
+    signedUrl
+    videoThumbnailSignedUrl
+  }
+  createdAt
+}
+
+fragment GroupAlbumFragment on GroupAlbum {
+  id
+  group {
+    id
+  }
+  name
+  description
+  coverImageGsUrl
+  coverImageSignedUrl
+  includeAssetFrom
+  includeAssetTo
+  assetCount
+  pologCount
+  createdAt
+}
+
+fragment GroupAssetFragment on GroupAsset {
+  id
+  owner {
+    id
+    username
+    fullName
+  }
+  signedUrl
+  gsUrl
+  kind
+  videoThumbnailSignedUrl
+  videoDurationSecond
+  latlng {
+    lat
+    lng
+  }
+  size {
+    width
+    height
+  }
+  takenAt
+  createdAt
+}
+
+fragment GroupActivityFragment on GroupActivity {
+  id
+  user {
+    id
+    fullName
+    iconSignedUrl
+  }
+  group {
+    id
+    name
+    iconSignedUrl
+    memberIds
+  }
+  album {
+    id
+    name
+  }
+  assets {
+    id
+    signedUrl
+    videoThumbnailSignedUrl
+  }
+  polog {
+    id
+    title
+  }
+  kind
+  createdAt
+}
+
+fragment GroupInvitationOverviewFragment on GroupInvitation {
+  id
+  group {
+    id
+    name
+    iconSignedUrl
+    memberIds
+  }
+  createdAt
+}
+
+fragment GroupInvitationFragment on GroupInvitation {
+  id
+  sender {
+    id
+    username
+    fullName
+  }
+  group {
+    id
+    name
+    iconSignedUrl
+    members {
+      id
+      username
+      fullName
+      iconSignedUrl
+    }
+  }
+  createdAt
+}
+
+fragment NotificationFragment on UserNotification {
+  id
+  user {
+    id
+    fullName
+    username
+    iconSignedUrl
+  }
+  sender {
+    id
+    fullName
+    username
+    iconSignedUrl
+  }
+  overviewJson
+  imageSignedUrl
+  detailHtml
+  isRead
+  kind
+  payloadJson
+  acceptedFollowRequest
+  createdAt
+}
+
+fragment SpotFragment on Spot {
+  id
+  name
+  address {
+    countryCode
+    iso31662Lvl4
+  }
+  latlng {
+    lat
+    lng
+  }
+}
+
+fragment StampFragment on Stamp {
+  kind
+  imageSignedUrl
+  specialImageSignedUrl
+  condition {
+    num
+    city
+  }
+}

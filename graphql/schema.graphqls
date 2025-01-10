@@ -1,0 +1,933 @@
+directive @adminAuth on FIELD_DEFINITION
+
+directive @auth on FIELD_DEFINITION
+
+directive @authBeforeUserCreate on FIELD_DEFINITION
+
+directive @debug on FIELD_DEFINITION
+
+"""
+The @defer directive may be specified on a fragment spread to imply
+de-prioritization, that causes the fragment to be omitted in the initial
+response, and delivered as a subsequent response afterward. A query with @defer
+directive will cause the request to potentially return multiple responses, where
+non-deferred data is delivered in the initial response and data deferred
+delivered in a subsequent response. @include and @skip take precedence over @defer.
+"""
+directive @defer(if: Boolean = true, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+directive @log on FIELD_DEFINITION
+
+"""
+The @specifiedBy built-in directive is used within the type system definition
+language to provide a scalar specification URL for specifying the behavior of
+custom scalar types.
+"""
+directive @specifiedBy(url: String!) on SCALAR
+
+directive @systemAuth on FIELD_DEFINITION
+
+type Address {
+  countryCode: String!
+  iso31662Lvl3: String!
+  iso31662Lvl4: String!
+  iso31662Lvl5: String!
+  iso31662Lvl6: String!
+  iso31662Lvl7: String!
+  iso31662Lvl8: String!
+  iso31662Lvl9: String!
+  iso31662Lvl10: String!
+  iso31662Lvl11: String!
+}
+
+type AdminPolog {
+  id: ID!
+  title: String!
+  forewordHtml: String!
+  afterwordHtml: String!
+  thumbnailGsUrl: String!
+  thumbnailSignedUrl: String!
+  label: PologLabel!
+  tags: [String!]!
+  routes: [PologRoute!]!
+  isRecommended: Boolean!
+  createdAt: DateTime!
+}
+
+type AdminPologConnection {
+  nodes: [AdminPolog!]!
+  pageInfo: PageInfo!
+}
+
+input AdminPologRecommendInput {
+  pologId: ID!
+  on: Boolean!
+}
+
+type AdminUserNotification {
+  id: ID!
+  overviewJson: String!
+  detailHtml: String!
+  isPublished: Boolean!
+  reservedAt: DateTime
+  publishedAt: DateTime
+  createdAt: DateTime!
+}
+
+type AdminUserNotificationConnection {
+  nodes: [AdminUserNotification!]!
+  pageInfo: PageInfo!
+}
+
+input AdminUserNotificationCreateInput {
+  userId: ID
+  overviewJson: String!
+  detailHtml: String!
+  reserveAt: DateTime
+}
+
+enum AssetKind {
+  Photo
+  Video
+}
+
+input DateRangeInput {
+  from: DateTime!
+  to: DateTime!
+}
+
+scalar DateTime
+
+input FcmTokenRegisterInput {
+  token: String!
+  deviceId: String!
+}
+
+enum Gender {
+  Unknown
+  Male
+  Female
+  NonBinary
+}
+
+type Group {
+  id: ID!
+  ownerId: ID!
+  owner: User!
+  name: String!
+  description: String
+  iconGsUrl: String!
+  iconSignedUrl: String!
+  memberIds: [ID!]!
+  members: [User!]!
+  albums(after: String, first: Int): GroupAlbumConnection!
+  albumCount: Int!
+  spots(after: String, first: Int, linkType: GroupSpotLinkType!): SpotConnection!
+  activities(after: String, first: Int): GroupActivityConnection!
+  createdAt: DateTime!
+}
+
+type GroupActivity {
+  id: ID!
+  groupId: ID!
+  group: Group!
+  userId: ID!
+  user: User!
+  albumId: ID
+  album: GroupAlbum
+  assetIds: [ID!]
+  assets: [GroupAsset!]
+  pologId: ID
+  polog: Polog
+  kind: GroupActivityKind!
+  createdAt: DateTime!
+}
+
+type GroupActivityConnection {
+  nodes: [GroupActivity!]!
+  pageInfo: PageInfo!
+}
+
+enum GroupActivityKind {
+  JoinMember
+  CreateAlbum
+  CreateAsset
+  LinkPolog
+}
+
+type GroupAlbum {
+  id: ID!
+  ownerId: ID!
+  owner: User!
+  groupId: ID!
+  group: Group!
+  name: String!
+  description: String
+  includeAssetFrom: DateTime
+  includeAssetTo: DateTime
+  coverImageGsUrl: String
+  coverImageSignedUrl: String
+  assets(after: String, first: Int, kind: AssetKind): GroupAssetConnection!
+  assetCount: Int!
+  firstAssets: [GroupAsset!]
+  pologs(after: String, first: Int): PologConnection!
+  pologCount: Int!
+  createdAt: DateTime!
+}
+
+type GroupAlbumConnection {
+  nodes: [GroupAlbum!]!
+  pageInfo: PageInfo!
+}
+
+input GroupAlbumCreateInput {
+  groupId: ID!
+  name: String!
+  description: String
+  coverImageGsUrl: String
+}
+
+input GroupAlbumPologLinkInput {
+  albumId: ID!
+  pologId: ID!
+}
+
+input GroupAlbumPologUnLinkInput {
+  albumId: ID!
+  pologId: ID!
+}
+
+input GroupAlbumUpdateInput {
+  id: ID!
+  name: String!
+  description: String
+  coverImageGsUrl: String
+}
+
+type GroupAsset {
+  id: ID!
+  ownerId: ID!
+  owner: User!
+  albumId: ID!
+  album: GroupAlbum!
+  gsUrl: String!
+  signedUrl: String!
+  kind: AssetKind!
+  videoThumbnailGsUrl: String
+  videoThumbnailSignedUrl: String
+  videoDurationSecond: Int
+  latlng: LatLng!
+  takenAt: DateTime!
+  size: Size!
+  createdAt: DateTime!
+}
+
+input GroupAssetBulkCreateInput {
+  albumId: ID!
+  assets: [GroupAssetCreateInput!]!
+}
+
+type GroupAssetConnection {
+  nodes: [GroupAsset!]!
+  pageInfo: PageInfo!
+}
+
+input GroupAssetCreateInput {
+  gsUrl: String!
+  kind: AssetKind!
+  latlng: LatLngInput!
+  takenAt: DateTime!
+  size: SizeInput!
+}
+
+type GroupConnection {
+  nodes: [Group!]!
+  pageInfo: PageInfo!
+}
+
+input GroupCreateInput {
+  name: String!
+  description: String
+  iconGsUrl: String!
+}
+
+type GroupInvitation {
+  id: ID!
+  senderId: ID!
+  sender: User!
+  receiverId: ID!
+  receiver: User!
+  groupId: ID!
+  group: Group!
+  createdAt: DateTime!
+}
+
+input GroupInvitationAcceptInput {
+  invitationId: ID!
+}
+
+type GroupInvitationConnection {
+  nodes: [GroupInvitation!]!
+  pageInfo: PageInfo!
+}
+
+input GroupInvitationRefuseInput {
+  invitationId: ID!
+}
+
+input GroupInviteInput {
+  groupId: ID!
+  userId: ID!
+}
+
+input GroupJoinInput {
+  token: String!
+}
+
+input GroupJoinUrlCreateInput {
+  groupId: ID!
+}
+
+type GroupReport {
+  id: ID!
+  groupId: ID!
+  group: Group!
+  userId: ID!
+  user: User!
+  content: String!
+  reason: GroupReportReason!
+  createdAt: DateTime!
+}
+
+type GroupReportConnection {
+  nodes: [GroupReport!]!
+  pageInfo: PageInfo!
+}
+
+input GroupReportCreateInput {
+  groupId: ID!
+  content: String!
+  reason: GroupReportReason!
+}
+
+enum GroupReportReason {
+  Spam
+  SexualHarassment
+  Nuisance
+  Other
+}
+
+input GroupSpotLinkInput {
+  groupId: ID!
+  linkType: GroupSpotLinkType!
+}
+
+type GroupSpotLinkState {
+  indexedSpotLinked: Boolean!
+  likedSpotLinked: Boolean!
+}
+
+enum GroupSpotLinkType {
+  IndexedSpot
+  LikedSpot
+}
+
+input GroupSpotUnLinkInput {
+  groupId: ID!
+  linkType: GroupSpotLinkType!
+}
+
+input GroupUpdateInput {
+  id: ID!
+  name: String!
+  description: String
+  iconGsUrl: String!
+}
+
+type LatLng {
+  lat: Float!
+  lng: Float!
+}
+
+input LatLngInput {
+  lat: Float!
+  lng: Float!
+}
+
+input LatLngRectInput {
+  minLat: Float!
+  maxLat: Float!
+  minLng: Float!
+  maxLng: Float!
+}
+
+input MakePublicUrlInput {
+  gsUrl: String!
+}
+
+input MasterAdminUserCreateInput {
+  email: String!
+  password: String!
+}
+
+type Me {
+  user: User!
+  follow_requests(after: String, first: Int): UserConnection!
+  notifications(after: String, first: Int): UserNotificationConnection!
+  groups(after: String, first: Int): GroupConnection!
+  pologs(after: String, first: Int, q: String, sortType: PologSortType!, filter: PologFilter): PologConnection!
+  accompaniedPologs(after: String, first: Int, q: String, sortType: PologSortType!, filter: PologFilter): PologConnection!
+  clippedPologs(after: String, first: Int): PologConnection!
+  mutualFollows: [User!]!
+  groupInvitations(after: String, first: Int): GroupInvitationConnection!
+  groupSpotLinkState(groupId: ID!): GroupSpotLinkState!
+  blockedUsers(after: String, first: Int): UserConnection!
+  followingPologs(after: String, first: Int): PologConnection!
+}
+
+type Mutation {
+  makePublicUrl(input: MakePublicUrlInput!): String!
+  userCreate(input: UserCreateInput!): Me!
+  userUpdate(input: UserUpdateInput!): Me!
+  userWithdrawal(input: UserWithdrawalInput!): Boolean!
+  fcmTokenRegister(input: FcmTokenRegisterInput!): Boolean!
+  userFollow(input: UserFollowInput!): Boolean!
+  userUnfollow(input: UserUnfollowInput!): Boolean!
+  userFollowAccept(input: UserFollowAcceptInput!): Boolean!
+  userNotificationRead(input: UserNotificationReadInput!): UserNotification!
+  userNotificationDelete(id: ID!): Boolean!
+  userBlockCreate(input: UserBlockCreateInput!): Boolean!
+  userBlockDelete(input: UserBlockDeleteInput!): Boolean!
+  groupCreate(input: GroupCreateInput!): Group!
+  groupUpdate(input: GroupUpdateInput!): Group!
+  groupInvite(input: GroupInviteInput!): GroupInvitation!
+  groupInvitationAccept(input: GroupInvitationAcceptInput): Group!
+  groupInvitationRefuse(input: GroupInvitationRefuseInput): Boolean!
+  groupJoinUrlCreate(input: GroupJoinUrlCreateInput): String!
+  groupJoin(input: GroupJoinInput): Group!
+  groupLeave(id: ID!): Boolean!
+  groupSpotLink(input: GroupSpotLinkInput!): Boolean!
+  groupSpotUnLink(input: GroupSpotUnLinkInput!): Boolean!
+  groupAlbumCreate(input: GroupAlbumCreateInput!): GroupAlbum!
+  groupAlbumUpdate(input: GroupAlbumUpdateInput!): GroupAlbum!
+  groupAlbumPologLink(input: GroupAlbumPologLinkInput): Boolean!
+  groupAlbumPologUnLink(input: GroupAlbumPologUnLinkInput): Boolean!
+  groupAlbumDelete(id: ID!): Boolean!
+  groupAssetCreate(input: GroupAssetBulkCreateInput!): [GroupAsset!]!
+  groupAssetDelete(id: ID!): Boolean!
+  groupReportCreate(input: GroupReportCreateInput!): GroupReport!
+  spotCreate(input: SpotCreateInput!): Spot!
+  spotLike(id: ID!): Spot!
+  spotUnLine(id: ID!): Spot!
+  pologCreate(input: PologCreateInput!): Polog!
+  pologUpdate(input: PologUpdateInput!): Polog!
+  pologDelete(id: ID!): Boolean!
+  pologView(id: ID!): Polog!
+  pologLike(id: ID!): Polog!
+  pologUnLike(id: ID!): Polog!
+  pologClip(id: ID!): Polog!
+  pologUnClip(id: ID!): Polog!
+  pologShare(id: ID!): Boolean!
+  pologCommentCreate(input: PologCommentCreateInput!): PologComment!
+  pologCommentDelete(id: ID!): Boolean!
+  adminUserNotificationCreate(input: AdminUserNotificationCreateInput!): AdminUserNotification!
+  adminNotificationDelete(id: ID!): Boolean!
+  adminPologRecommend(input: AdminPologRecommendInput!): AdminPolog!
+  masterMigration: Boolean!
+  masterAdminUserCreate(input: MasterAdminUserCreateInput!): ID!
+  masterOsmSync: Boolean!
+  masterAlgoliaSync: Boolean!
+  debugStampFill(userId: ID!): Boolean!
+  debugUserBulkCreate: Boolean!
+  debugPologBulkCreate(userId: ID!): Boolean!
+}
+
+enum NotificationKind {
+  Official
+  UserFollow
+  PologLike
+  PologComment
+  UserFollowRequest
+  UserFollowAccept
+  PologCompanion
+  GroupInvitation
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  endCursor: String!
+}
+
+type Polog {
+  id: ID!
+  appLocalId: ID!
+  userId: ID!
+  user: User!
+  title: String!
+  forewordHtml: String
+  afterwordHtml: String
+  thumbnailGsUrl: String!
+  thumbnailSignedUrl: String!
+  companionIds: [ID!]!
+  companions: [User!]!
+  outerCompanionNames: [String!]!
+  visibility: PologVisibility!
+  label: PologLabel!
+  tags: [String!]!
+  isCommentable: Boolean!
+  likeCount: Int!
+  clipCount: Int!
+  viewCount: Int!
+  commentCount: Int!
+  isLiked: Boolean!
+  isClipped: Boolean!
+  routes: [PologRoute!]!
+  comments(after: String, first: Int): PologCommentConnection!
+  linkedAlbums: [GroupAlbum!]!
+  createdAt: DateTime!
+}
+
+type PologComment {
+  id: ID!
+  pologId: ID!
+  polog: Polog!
+  userId: ID!
+  user: User!
+  text: String!
+  createdAt: DateTime!
+}
+
+type PologCommentConnection {
+  nodes: [PologComment!]!
+  pageInfo: PageInfo!
+}
+
+input PologCommentCreateInput {
+  pologId: ID!
+  text: String!
+}
+
+type PologConnection {
+  nodes: [Polog!]!
+  pageInfo: PageInfo!
+}
+
+input PologCreateInput {
+  appLocalId: ID!
+  title: String!
+  forewordHtml: String
+  afterwordHtml: String
+  thumbnailGsUrl: String!
+  companionIds: [ID!]!
+  outerCompanionNames: [String!]!
+  visibility: PologVisibility!
+  label: PologLabelInput!
+  tags: [String!]!
+  isCommentable: Boolean!
+  routes: [PologRouteInput!]!
+}
+
+input PologFilter {
+  spotCategoryID: ID
+  routeDate: PologFilterRouteDate
+  routeIndex: PologFilterRouteIndex
+}
+
+input PologFilterRouteDate {
+  firstRouteDateRange: DateRangeInput
+  firstRouteDateMonth: Int
+}
+
+enum PologFilterRouteIndex {
+  LessThan1
+  MoreThan2
+}
+
+type PologLabel {
+  label1: String
+  label2: String
+  label3: String
+}
+
+input PologLabelInput {
+  label1: String
+  label2: String
+  label3: String
+}
+
+type PologRoute {
+  id: ID!
+  pologId: ID!
+  polog: Polog!
+  spotId: ID
+  spot: Spot
+  assetGsUrl: String!
+  assetSignedUrl: String!
+  assetKind: AssetKind!
+  assetDate: DateTime!
+  description: String
+  priceLabel: String
+  review: Int
+  transportations: [PologTransportation!]!
+  isIncludeIndex: Boolean!
+  videoThumbnailGsUrl: String
+  videoThumbnailSignedUrl: String
+  videoDurationSecond: Int
+  videoStartSecond: Int
+  videoEndSecond: Int
+  videoIsMute: Boolean
+}
+
+input PologRouteInput {
+  assetGsUrl: String!
+  assetKind: AssetKind!
+  assetDate: DateTime!
+  description: String
+  priceLabel: String
+  review: Int
+  transportations: [PologTransportation!]!
+  isIncludeIndex: Boolean!
+  spotId: ID
+  videoInput: PologRouteVideoInput
+}
+
+input PologRouteVideoInput {
+  startSecond: Int!
+  endSecond: Int!
+  isMute: Boolean!
+}
+
+enum PologSortType {
+  CreatedAt
+  EventDateAt
+}
+
+type PologSummary {
+  totalPologCount: Int!
+  totalLikeCount: Int!
+  totalMediaCount: Int!
+  totalPologDayCount: Int!
+  totalDistance: Float!
+  totalSpotCount: Int!
+  visitedCountryCodes: [String!]!
+  visitedPrefectureCodes: [String!]!
+}
+
+enum PologTransportation {
+  None
+  Walk
+  Car
+  Taxi
+  Bus
+  Train
+  Bicycle
+  Bike
+  CableCar
+  Ferry
+  Airplane
+}
+
+input PologUpdateInput {
+  id: ID!
+  title: String!
+  forewordHtml: String
+  afterwordHtml: String
+  thumbnailGsUrl: String!
+  companionIds: [ID!]!
+  outerCompanionNames: [String!]!
+  visibility: PologVisibility!
+  label: PologLabelInput!
+  tags: [String!]!
+  isCommentable: Boolean!
+  routes: [PologRouteInput!]!
+}
+
+enum PologVisibility {
+  Public
+  OnlyMutualFollow
+  OnlyCompanion
+  Private
+}
+
+type PublicPolog {
+  id: ID!
+  userId: ID!
+  user: PublicUser!
+  title: String!
+  forewordHtml: String!
+  afterwordHtml: String!
+  thumbnailGsUrl: String!
+  thumbnailSignedUrl: String!
+  label: PologLabel!
+  tags: [String!]!
+  likeCount: Int!
+  clipCount: Int!
+  viewCount: Int!
+  commentCount: Int!
+  routes: [PologRoute!]!
+  createdAt: DateTime!
+}
+
+type PublicPologConnection {
+  nodes: [PublicPolog!]!
+  pageInfo: PageInfo!
+}
+
+type PublicUser {
+  id: ID!
+  kind: UserKind!
+  username: String!
+  fullName: String!
+  iconGsUrl: String!
+  iconSignedUrl: String!
+  profile: String!
+  isPublic: Boolean!
+  followeeCount: Int!
+  followerCount: Int!
+  pologs(after: String, first: Int): PublicPologConnection!
+  pologSummary: PologSummary!
+  stamps: [Stamp!]!
+  createdAt: DateTime!
+}
+
+type PublicUserConnection {
+  nodes: [PublicUser!]!
+  pageInfo: PageInfo!
+}
+
+type Query {
+  userExist: Boolean!
+  me: Me!
+  users(after: String, first: Int, username: String): UserConnection!
+  spots(after: String, first: Int, q: String, latlngRect: LatLngRectInput, latlng: LatLngInput): SpotConnection!
+  spotCategories(after: String, first: Int, parentId: String): SpotCategoryConnection!
+  recommendedPologs(after: String, first: Int): PologConnection!
+  pologs(after: String, first: Int, q: String): PologConnection!
+  user(id: ID!): User!
+  group(id: ID!): Group!
+  groupAlbum(id: ID!): GroupAlbum!
+  groupAsset(id: ID!): GroupAsset!
+  groupInvitation(id: ID!): GroupInvitation!
+  groupActivity(id: ID!): GroupActivity!
+  polog(id: ID!): Polog!
+  userNotification(id: ID!): UserNotification!
+  spot(id: ID!): Spot!
+  spotCategory(id: ID!): SpotCategory!
+  adminUserNotifications(after: String, first: Int): AdminUserNotificationConnection!
+  adminUserNotification(id: ID!): AdminUserNotification!
+  adminPologs(after: String, first: Int): AdminPologConnection!
+  publicRecommendedPologs(after: String, first: Int): PublicPologConnection!
+  publicPologs(after: String, first: Int, q: String): PublicPologConnection!
+  pubicUser(id: ID!): PublicUser!
+  pubicPolog(id: ID!): PublicPolog!
+}
+
+type Size {
+  width: Float!
+  height: Float!
+}
+
+input SizeInput {
+  width: Float!
+  height: Float!
+}
+
+type Spot {
+  id: ID!
+  osmId: ID!
+  osmType: String!
+  userId: ID
+  user: User
+  address: Address!
+  latlng: LatLng!
+  name: String!
+  linkUrl: String
+  facebook: String
+  twitter: String
+  instagram: String
+  categoryIds: [ID!]!
+  categories: [SpotCategory!]!
+  isVisited: Boolean!
+  createdAt: DateTime!
+}
+
+type SpotCategory {
+  id: ID!
+  parentId: ID
+  japanese: String!
+}
+
+type SpotCategoryConnection {
+  nodes: [SpotCategory!]!
+  pageInfo: PageInfo!
+}
+
+type SpotConnection {
+  nodes: [Spot!]!
+  pageInfo: PageInfo!
+}
+
+input SpotCreateInput {
+  countryCode: String!
+  iso31662Lvl3: String!
+  iso31662Lvl4: String!
+  iso31662Lvl5: String!
+  iso31662Lvl6: String!
+  iso31662Lvl7: String!
+  iso31662Lvl8: String!
+  iso31662Lvl9: String!
+  iso31662Lvl10: String!
+  iso31662Lvl11: String!
+  latlng: LatLngInput!
+  name: String!
+  linkUrl: String
+  facebook: String
+  twitter: String
+  instagram: String
+  categoryIds: [ID!]!
+}
+
+type Stamp {
+  kind: StampKind!
+  condition: StampCondition
+  imageGsUrl: String
+  imageSignedUrl: String
+  specialImageGsUrl: String
+  specialImageSignedUrl: String
+  createdAt: DateTime!
+}
+
+type StampCondition {
+  num: Int!
+  city: String
+}
+
+enum StampKind {
+  PologCreate
+  PologShare
+  AlbumCreate
+  PologClip
+  PologLike
+  MutualFollow
+  PologRouteSpotCreate
+  ForeignPologCreate
+  PologRouteSpotInCityCreate
+}
+
+type User {
+  id: ID!
+  kind: UserKind!
+  username: String!
+  fullName: String!
+  iconGsUrl: String!
+  iconSignedUrl: String!
+  profile: String!
+  gender: Gender!
+  birthdate: String!
+  isPublic: Boolean!
+  isPublicLikedSpot: Boolean!
+  isFollowing: Boolean!
+  isFollowed: Boolean!
+  followeeCount: Int!
+  followerCount: Int!
+  pologCount: Int!
+  followees(after: String, first: Int): UserConnection!
+  followers(after: String, first: Int): UserConnection!
+  likedSpots(after: String, first: Int): SpotConnection!
+  pologs(after: String, first: Int, q: String, sortType: PologSortType!, filter: PologFilter): PologConnection!
+  accompaniedPologs(after: String, first: Int, q: String, sortType: PologSortType!, filter: PologFilter): PologConnection!
+  pologSummary: PologSummary!
+  stamps: [Stamp!]!
+  isBlocking: Boolean!
+  isBlocked: Boolean!
+  isFollowRequesting: Boolean!
+  isWithdrawal: Boolean!
+  createdAt: DateTime!
+}
+
+input UserBlockCreateInput {
+  toUserId: ID!
+}
+
+input UserBlockDeleteInput {
+  toUserId: ID!
+}
+
+type UserConnection {
+  nodes: [User!]!
+  pageInfo: PageInfo!
+}
+
+input UserCreateInput {
+  username: String!
+  fullName: String!
+  iconGsUrl: String!
+}
+
+input UserFollowAcceptInput {
+  fromUserId: ID!
+}
+
+input UserFollowInput {
+  toUserId: ID!
+}
+
+enum UserKind {
+  Normal
+  Official
+}
+
+type UserNotification {
+  id: ID!
+  userId: ID!
+  user: User!
+  overviewJson: String!
+  imageSignedUrl: String
+  sender: User
+  detailHtml: String!
+  isRead: Boolean!
+  kind: NotificationKind!
+  payloadJson: String!
+  acceptedFollowRequest: Boolean
+  createdAt: DateTime!
+}
+
+type UserNotificationConnection {
+  nodes: [UserNotification!]!
+  pageInfo: PageInfo!
+}
+
+input UserNotificationReadInput {
+  id: String!
+}
+
+input UserUnfollowInput {
+  toUserId: ID!
+}
+
+input UserUpdateInput {
+  fullName: String!
+  iconGsUrl: String!
+  profile: String!
+  gender: Gender!
+  birthdate: String!
+  isPublic: Boolean!
+  isPublicLikedSpot: Boolean!
+}
+
+input UserWithdrawalInput {
+  reason: WithdrawalReason!
+  detail: String
+}
+
+enum WithdrawalReason {
+  NotSatisfied
+  ComplexUserGuide
+  UseOtherService
+  NotFoundContent
+  NotUse
+  UnpleasantFeeling
+  ForReset
+  Other
+}
+

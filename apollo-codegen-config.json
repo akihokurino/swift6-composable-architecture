@@ -1,0 +1,23 @@
+{
+  "schemaNamespace": "PologAPI",
+  "input": {
+    "operationSearchPaths": ["**/*.graphql"],
+    "schemaSearchPaths": ["**/*.graphqls"]
+  },
+  "output": {
+    "testMocks": {
+      "none": {}
+    },
+    "schemaTypes": {
+      "path": "./App/Sources/App/Infra/Graph/API",
+      "moduleType": {
+        "embeddedInTarget": {
+          "name": "Polog"
+        }
+      }
+    },
+    "operations": {
+      "inSchemaModule": {}
+    }
+  }
+}

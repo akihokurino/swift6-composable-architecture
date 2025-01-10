@@ -1,0 +1,6 @@
+node_modules
+.env
+Config.xcconfig
+App/Sources/App/Infra/Graph/API
+xcuserdata
+GoogleService-Info.plist
